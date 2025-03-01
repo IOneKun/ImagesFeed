@@ -72,6 +72,7 @@
                                             <outlet property="cellImage" destination="8rv-vu-cUN" id="1X0-3w-59W"/>
                                             <outlet property="dateLabel" destination="n9s-KR-r90" id="cL1-dA-h2K"/>
                                             <outlet property="likeButton" destination="BHW-bo-eNj" id="yKJ-yF-8dI"/>
+                                            <segue destination="LGe-bE-cbE" kind="show" id="pal-Jx-kX0"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -128,7 +129,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Photo" translatesAutoresizingMaskIntoConstraints="NO" id="Ee8-nX-VPd" userLabel="Avatar Image">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="login_avatar" translatesAutoresizingMaskIntoConstraints="NO" id="Ee8-nX-VPd" userLabel="Avatar Image">
                                 <rect key="frame" x="16" y="91" width="70" height="70"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="70" id="3QV-um-aMs"/>
@@ -221,12 +222,42 @@
             </objects>
             <point key="canvasLocation" x="-1289.3129770992366" y="-161.26760563380282"/>
         </scene>
+        <!--SingleImage -->
+        <scene sceneID="a9L-F9-9sH">
+            <objects>
+                <viewController title="SingleImage " id="LGe-bE-cbE" customClass="SingleImageViewController" customModule="ImagesFeed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="CXr-vc-2zx">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="dUk-CY-gvZ">
+                                <rect key="frame" x="0.0" y="44" width="393" height="759"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="9bg-67-YS4"/>
+                        <color key="backgroundColor" name="YP Black"/>
+                        <constraints>
+                            <constraint firstItem="dUk-CY-gvZ" firstAttribute="bottom" secondItem="9bg-67-YS4" secondAttribute="bottom" constant="34" id="36X-ca-dPU"/>
+                            <constraint firstItem="9bg-67-YS4" firstAttribute="top" secondItem="dUk-CY-gvZ" secondAttribute="top" constant="59" id="3JP-tR-9lA"/>
+                            <constraint firstItem="dUk-CY-gvZ" firstAttribute="leading" secondItem="9bg-67-YS4" secondAttribute="leading" id="DRP-3S-5IA"/>
+                            <constraint firstItem="9bg-67-YS4" firstAttribute="trailing" secondItem="dUk-CY-gvZ" secondAttribute="trailing" id="rcp-sP-0TO"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="j96-9M-zM9"/>
+                    <connections>
+                        <outlet property="imageView" destination="dUk-CY-gvZ" id="UmU-Xb-vat"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uJm-Sk-CjB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="610" y="-161"/>
+        </scene>
     </scenes>
     <resources>
         <image name="0" width="533.33331298828125" height="353"/>
         <image name="Exit" width="24" height="24"/>
-        <image name="Photo" width="70" height="70"/>
         <image name="like_Button" width="42" height="42"/>
+        <image name="login_avatar" width="70" height="70"/>
         <image name="tab_editorial_active" width="30" height="30"/>
         <image name="tab_profile_active" width="30" height="30"/>
         <namedColor name="YP Black">
