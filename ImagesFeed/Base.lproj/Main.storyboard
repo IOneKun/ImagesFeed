@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="TrB-4v-S36">
-    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <device id="retina6_12" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
@@ -94,7 +94,7 @@
                     <navigationItem key="navigationItem" id="qhg-Km-Lec"/>
                     <connections>
                         <outlet property="tableView" destination="BDz-WM-S6p" id="pWF-bG-f5T"/>
-                        <segue destination="LGe-bE-cbE" kind="presentation" identifier="ShowSingleImage" modalPresentationStyle="fullScreen" id="p3r-li-pyY"/>
+                        <segue destination="LGe-bE-cbE" kind="presentation" identifier="ShowSingleImage" id="p3r-li-pyY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -122,10 +122,10 @@
             </objects>
             <point key="canvasLocation" x="-2560" y="-752"/>
         </scene>
-        <!--Profile -->
+        <!--Profile-->
         <scene sceneID="AGv-wi-hEj">
             <objects>
-                <viewController title="Profile " id="mdf-9C-FHc" customClass="ProfileViewController" customModule="ImagesFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Profile" id="mdf-9C-FHc" customClass="ProfileViewController" customModule="ImagesFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="oa2-NA-toB">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -199,19 +199,30 @@
             </objects>
             <point key="canvasLocation" x="-1556" y="-294"/>
         </scene>
-        <!--SingleImage -->
+        <!--Single Image View Controller-->
         <scene sceneID="a9L-F9-9sH">
             <objects>
-                <viewController title="SingleImage " modalPresentationStyle="fullScreen" id="LGe-bE-cbE" customClass="SingleImageViewController" customModule="ImagesFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="fullScreen" id="LGe-bE-cbE" customClass="SingleImageViewController" customModule="ImagesFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="CXr-vc-2zx">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="dUk-CY-gvZ">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                            </imageView>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hxb-iz-4M4">
+                                <rect key="frame" x="0.0" y="0.0" width="280" height="168"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="SMO-vv-47n">
+                                        <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <viewLayoutGuide key="contentLayoutGuide" id="7Kp-PV-cMF"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="Nmd-Gu-PUF"/>
+                                <connections>
+                                    <outlet property="delegate" destination="LGe-bE-cbE" id="EpL-Ez-STz"/>
+                                </connections>
+                            </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jyj-F3-nOT">
-                                <rect key="frame" x="9" y="11" width="44" height="44"/>
+                                <rect key="frame" x="8" y="8" width="44" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="TvN-sT-NAo"/>
                                     <constraint firstAttribute="height" constant="44" id="pOA-Sk-mau"/>
@@ -219,29 +230,44 @@
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="backward_button"/>
                                 <connections>
-                                    <action selector="didTapBackButton" destination="LGe-bE-cbE" eventType="touchUpInside" id="8Wd-zd-uPb"/>
+                                    <action selector="didTapBackButton" destination="LGe-bE-cbE" eventType="touchUpInside" id="UD3-u5-fpE"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kKw-i5-bKx">
+                                <rect key="frame" x="171.66666666666666" y="785" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="iCx-hS-hPc"/>
+                                    <constraint firstAttribute="height" constant="50" id="sG4-sJ-12s"/>
+                                </constraints>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="share_button"/>
+                                <connections>
+                                    <action selector="didTapShareButton:" destination="LGe-bE-cbE" eventType="touchUpInside" id="rBx-PI-KRt"/>
                                 </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="9bg-67-YS4"/>
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
-                            <constraint firstItem="jyj-F3-nOT" firstAttribute="top" secondItem="9bg-67-YS4" secondAttribute="top" constant="11" id="5va-v9-jLt"/>
-                            <constraint firstItem="dUk-CY-gvZ" firstAttribute="trailing" secondItem="CXr-vc-2zx" secondAttribute="trailing" id="C9g-EK-Nge"/>
-                            <constraint firstItem="dUk-CY-gvZ" firstAttribute="top" secondItem="CXr-vc-2zx" secondAttribute="top" id="bii-Pf-PKv"/>
-                            <constraint firstItem="dUk-CY-gvZ" firstAttribute="leading" secondItem="CXr-vc-2zx" secondAttribute="leading" id="h2A-8J-cGi"/>
-                            <constraint firstAttribute="bottom" secondItem="dUk-CY-gvZ" secondAttribute="bottom" id="oRl-AQ-Ig0"/>
-                            <constraint firstItem="jyj-F3-nOT" firstAttribute="leading" secondItem="9bg-67-YS4" secondAttribute="leading" constant="9" id="u6C-eA-ef3"/>
+                            <constraint firstAttribute="bottom" secondItem="hxb-iz-4M4" secondAttribute="bottom" id="8MG-jl-fU5"/>
+                            <constraint firstItem="kKw-i5-bKx" firstAttribute="centerX" secondItem="9bg-67-YS4" secondAttribute="centerX" id="BEb-xa-aVn"/>
+                            <constraint firstItem="jyj-F3-nOT" firstAttribute="top" secondItem="9bg-67-YS4" secondAttribute="top" constant="8" id="Gut-qf-Moq"/>
+                            <constraint firstItem="9bg-67-YS4" firstAttribute="trailing" secondItem="hxb-iz-4M4" secondAttribute="trailing" id="Ium-9U-Mle"/>
+                            <constraint firstItem="9bg-67-YS4" firstAttribute="bottom" secondItem="kKw-i5-bKx" secondAttribute="bottom" constant="17" id="XgR-rh-Vq6"/>
+                            <constraint firstItem="hxb-iz-4M4" firstAttribute="leading" secondItem="9bg-67-YS4" secondAttribute="leading" id="dLo-Rl-q22"/>
+                            <constraint firstItem="hxb-iz-4M4" firstAttribute="top" secondItem="CXr-vc-2zx" secondAttribute="top" id="wMc-L3-Eot"/>
+                            <constraint firstItem="jyj-F3-nOT" firstAttribute="leading" secondItem="9bg-67-YS4" secondAttribute="leading" constant="8" id="wNN-2K-5am"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="j96-9M-zM9"/>
                     <connections>
-                        <outlet property="imageView" destination="dUk-CY-gvZ" id="UmU-Xb-vat"/>
+                        <outlet property="imageView" destination="SMO-vv-47n" id="H7E-Hf-gzz"/>
+                        <outlet property="scrollView" destination="hxb-iz-4M4" id="suS-yI-f0C"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uJm-Sk-CjB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-640" y="-964"/>
+            <point key="canvasLocation" x="-640.4580152671756" y="-964.08450704225356"/>
         </scene>
     </scenes>
     <resources>
@@ -250,6 +276,7 @@
         <image name="backward_button" width="24" height="24"/>
         <image name="like_Button" width="42" height="42"/>
         <image name="login_avatar" width="70" height="70"/>
+        <image name="share_button" width="51" height="51"/>
         <image name="tab_editorial_active" width="30" height="30"/>
         <image name="tab_profile_active" width="30" height="30"/>
         <namedColor name="YP Black">
