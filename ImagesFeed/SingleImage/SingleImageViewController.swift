@@ -14,15 +14,15 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var scrollView: UIScrollView!
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        scrollView.delegate = self 
+        scrollView.delegate = self
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         
-        guard let image = image else { return } 
+        guard let image = image else { return }
         imageView.image = image
         imageView.frame.size = image.size
         rescaleAndCenterImageInScrollView(image: image)
@@ -60,7 +60,7 @@ final class SingleImageViewController: UIViewController {
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {
- func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-    return imageView
- }
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return imageView
+    }
 }
