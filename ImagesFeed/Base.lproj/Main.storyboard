@@ -274,9 +274,16 @@
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="HJX-P2-43i">
+                                <rect key="frame" x="0.0" y="103" width="393" height="4"/>
+                                <color key="progressTintColor" name="YPBlack"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ED4-6W-cgZ"/>
                         <constraints>
+                            <constraint firstItem="HJX-P2-43i" firstAttribute="top" secondItem="ED4-6W-cgZ" secondAttribute="top" id="0rc-zd-Z34"/>
+                            <constraint firstItem="HJX-P2-43i" firstAttribute="leading" secondItem="ED4-6W-cgZ" secondAttribute="leading" id="2K7-Xg-i3b"/>
+                            <constraint firstItem="ED4-6W-cgZ" firstAttribute="trailing" secondItem="HJX-P2-43i" secondAttribute="trailing" id="9gr-Gu-h3Z"/>
                             <constraint firstAttribute="bottom" secondItem="phH-Kk-TLL" secondAttribute="bottom" id="Y1g-BM-Ags"/>
                             <constraint firstItem="phH-Kk-TLL" firstAttribute="top" secondItem="ED4-6W-cgZ" secondAttribute="top" constant="-103" id="aR4-S2-XD6"/>
                             <constraint firstItem="phH-Kk-TLL" firstAttribute="trailing" secondItem="kaO-u7-we3" secondAttribute="trailing" id="ibd-IR-Ntr"/>
@@ -285,6 +292,7 @@
                     </view>
                     <navigationItem key="navigationItem" style="editor" id="7d1-Cz-LIs"/>
                     <connections>
+                        <outlet property="progressiveView" destination="HJX-P2-43i" id="4W0-0v-Nf6"/>
                         <outlet property="webView" destination="phH-Kk-TLL" id="ZqA-1Q-JGv"/>
                     </connections>
                 </viewController>
@@ -320,6 +328,9 @@
         <image name="tab_editorial_active" width="30" height="30"/>
         <image name="tab_profile_active" width="30" height="30"/>
         <namedColor name="YP Black">
+            <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="YPBlack">
             <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="YPWhite">
