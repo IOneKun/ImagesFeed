@@ -11,6 +11,7 @@ final class SplashViewController: UIViewController {
         super.viewDidAppear(animated)
         
         if let token = tokenStorage.token  {
+            print("Сохраненный токен найден \(token)")
             switchToTabBarController()
         } else {
             performSegue(withIdentifier: showAuthScreenSegueIdentifier, sender: nil)

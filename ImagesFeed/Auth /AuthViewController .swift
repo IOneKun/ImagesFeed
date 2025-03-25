@@ -13,7 +13,8 @@ final class AuthViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showWebViewSegueIdentifier {
             guard let webViewController = segue.destination as? WebViewController else {
-                fatalError("Failed to prepare for \(showWebViewSegueIdentifier)")
+                assertionFailure("Не удалось выполнить переход по \(showWebViewSegueIdentifier)")
+                return 
             }
             webViewController.delegate = self
         } else {
@@ -35,6 +36,7 @@ final class AuthViewController: UIViewController {
 }
 extension AuthViewController: WebViewControllerDelegate {
     func webViewController(_ vc: WebViewController, didAuthenticateWithCode code: String) {
+        print("Получен код авторизации \(code)")
         delegate?.authViewController(self, didAuthenticateWithCode: code)
         fetchOAuthToken(code)
     }
@@ -44,6 +46,7 @@ extension AuthViewController: WebViewControllerDelegate {
             guard let self = self else { return }
             switch result {
             case .success:
+                print("Авторизация успешна, токен получен")
                 delegate?.authViewController(self, didAuthenticateWithCode: code)
             case .failure(let error):
                 print("Ошибка получения токена \(error)")

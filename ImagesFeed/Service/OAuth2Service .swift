@@ -1,13 +1,14 @@
 import Foundation
-import UIKit
-
 
 final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
     
     func makeOAuthTokenRequest(code: String) -> URLRequest? {
-        let baseURL = URL(string: "https://unsplash.com")!
+        guard let baseURL = URL(string: Constants.baseURLString) else {
+            print("Некорректный базовый URL: \(Constants.baseURLString)")
+            return nil
+        }
         
         var components = URLComponents()
         components.path = "/oauth/token"
@@ -21,6 +22,7 @@ final class OAuth2Service {
         
         guard let url = components.url(relativeTo: baseURL) else {
             assertionFailure("Не удалось создать URL для OAuth")
+            print("Не удалось создать URL. BaseURL: \(baseURL.absoluteString), Path: \(components.path)")
             return nil
         }
         
@@ -31,7 +33,8 @@ final class OAuth2Service {
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let request = makeOAuthTokenRequest(code: code) else {
-            completion(.failure(NetworkError.urlSessionError))
+            print("Не удалось создать URLrequest для OAuthToken")
+            completion(.failure(NetworkError.invalidURLComponents))
             return
         }
         let task = URLSession.shared.data(for: request) { result in
@@ -44,7 +47,7 @@ final class OAuth2Service {
                     OAuth2TokenStorage().token = token
                     
                     completion(.success(token))
-                    print("Токен получен")
+                    print("Токен успешн получен")
                 } catch {
                     print("Ошибка декодирования: \(error)")
                     completion(.failure(error))

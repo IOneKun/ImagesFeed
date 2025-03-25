@@ -12,8 +12,6 @@ protocol WebViewControllerDelegate: AnyObject {
 }
 
 final class WebViewController: UIViewController {
-    
-    
     @IBOutlet private var webView: WKWebView!
     @IBOutlet private var progressView: UIProgressView!
     
@@ -23,11 +21,8 @@ final class WebViewController: UIViewController {
         super.viewDidLoad()
         
         loadAuthView()
-        
         webView.navigationDelegate = self
-        
         updateProgress()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -68,7 +63,7 @@ final class WebViewController: UIViewController {
     
     private func loadAuthView() {
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            print("Cannnot create URLComponents")
+            print("Не удалось создать URLComponents из \(WebViewConstants.unsplashAuthorizeURLString)")
             return
         }
         urlComponents.queryItems = [
@@ -78,7 +73,7 @@ final class WebViewController: UIViewController {
             URLQueryItem(name: "scope", value: Constants.accessScope)
         ]
         guard let url = urlComponents.url else {
-            print("Cannot create URL")
+            print("Не удалось создать URL из URLComponents \(urlComponents.path)")
             return
         }
         let request = URLRequest(url: url)
@@ -92,20 +87,26 @@ extension WebViewController: WKNavigationDelegate {
         if let code = code(from: navigationAction) {
             delegate?.webViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
+            print("Код авторизации успешно получен: \(code)")
         } else {
+            print("Код авторизации не найден в URL: \(String(describing: navigationAction.request.url?.absoluteString))")
             decisionHandler(.allow)
         }
     }
     private func code(from navigationAction: WKNavigationAction) -> String? {
-        if
+        guard
             let url = navigationAction.request.url,
-            let urlComponents = URLComponents(string: url.absoluteString),
-            urlComponents.path == "/oauth/authorize/native",
-            let items = urlComponents.queryItems,
-            let codeItem = items.first(where: { $0.name == "code"}) {
-            return codeItem.value
-        } else {
+            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        else {
+            print("Некорректный URL запроса")
             return nil
         }
+        
+        guard urlComponents.path == "/oauth/authorize/native" else {
+            print("Неожиданный путь URL: \(urlComponents.path)")
+            return nil
+        }
+        
+        return urlComponents.queryItems?.first(where: { $0.name == "code" })?.value
     }
 }
