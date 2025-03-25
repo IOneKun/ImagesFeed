@@ -29,7 +29,8 @@ final class SplashViewController: UIViewController {
     
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
-            fatalError("Invalid Configuration")
+            print("Окно не найдено")
+            return
         }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarController")
         window.rootViewController = tabBarController
@@ -40,14 +41,17 @@ extension SplashViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showAuthScreenSegueIdentifier {
             guard let navigationController = segue.destination as? UINavigationController,
-                  let viewController = navigationController.viewControllers[0] as? AuthViewController else {
-                fatalError("Failed to prepare for \(showAuthScreenSegueIdentifier)") }
+                  let viewController = navigationController.viewControllers.first as? AuthViewController else {
+                print("Не удалось выполнить переход по \(showAuthScreenSegueIdentifier)")
+                return
+            }
             viewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)
         }
     }
 }
+
 
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
