@@ -1,6 +1,6 @@
 import UIKit
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     
     private let avatarImageView = UIImageView()
     private let nameLabel = UILabel()
