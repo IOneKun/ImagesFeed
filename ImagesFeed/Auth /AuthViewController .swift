@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 protocol AuthViewControllerDelegate: AnyObject {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String)
@@ -38,6 +39,7 @@ extension AuthViewController: WebViewControllerDelegate {
     func webViewController(_ vc: WebViewController, didAuthenticateWithCode code: String) {
         print("Получен код авторизации \(code)")
         delegate?.authViewController(self, didAuthenticateWithCode: code)
+        ProgressHUD.animate()
         fetchOAuthToken(code)
     }
     
@@ -52,6 +54,7 @@ extension AuthViewController: WebViewControllerDelegate {
                 print("Ошибка получения токена \(error)")
             }
         }
+        ProgressHUD.dismiss()
     }
     
     func webViewControllerDidCancel(_ vc: WebViewController) {
