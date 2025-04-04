@@ -8,6 +8,10 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
     
+    private let urlSession = URLSession.shared
+    private var task: URLSessionTask?
+    private var lastCode: String?
+    
     
     func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard let baseURL = URL(string: Constants.baseURLString) else {
@@ -37,31 +41,54 @@ final class OAuth2Service {
     }
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        
+        if task != nil {
+            if lastCode != code {
+                task?.cancel()
+            } else {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+        } else {
+            if lastCode == code {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+        }
+        lastCode = code
+        
         guard let request = makeOAuthTokenRequest(code: code) else {
             print("Не удалось создать URLrequest для OAuthToken")
             completion(.failure(NetworkError.invalidURLComponents))
             return
         }
-        let task = URLSession.shared.data(for: request) { result in
-            switch result {
-            case .success(let data):
+        let task = urlSession.dataTask(with: request) { [weak self] data, response, error in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                
+                self.task = nil
+                self.lastCode = nil
+                
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                guard let data = data else {
+                    completion(.failure(AuthServiceError.invalidRequest))
+                    return
+                }
                 do {
                     let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
                     let token = tokenResponse.accessToken
-                    
                     OAuth2TokenStorage().token = token
-                    
                     completion(.success(token))
-                    print("Токен успешн получен")
                 } catch {
-                    print("Ошибка декодирования: \(error)")
                     completion(.failure(error))
                 }
-            case .failure(let error):
-                print("Ошибка сети: \(error)")
-                completion(.failure(error))
             }
         }
+        self.task = task
         task.resume()
     }
 }
