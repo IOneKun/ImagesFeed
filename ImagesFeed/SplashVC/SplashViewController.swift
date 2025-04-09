@@ -3,8 +3,7 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     private let showAuthScreenSegueIdentifier = "ShowAuthenticationScreen"
-    
-    
+    private let profileService = ProfileService.shared 
     private let tokenStorage = OAuth2TokenStorage()
     
     override func viewDidAppear(_ animated: Bool) {
@@ -12,7 +11,7 @@ final class SplashViewController: UIViewController {
         
         if let token = tokenStorage.token  {
             print("Сохраненный токен найден \(token)")
-            switchToTabBarController()
+            fetchProfile(token)
         } else {
             performSegue(withIdentifier: showAuthScreenSegueIdentifier, sender: nil)
         }
@@ -55,7 +54,30 @@ extension SplashViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        self.switchToTabBarController()
+        guard let token = tokenStorage.token else {
+            print("Токен отсутствует после авторизации")
+            return
+        }
+        fetchProfile(token)
+        print("Подготовка профиля началась...")
+    }
+  
+    private func fetchProfile(_ token: String) {
+            guard let token = OAuth2TokenStorage().token else {
+                print("Токена нет")
+                return
+            }
+            profileService.fetchProfile(token) { result in
+                switch result {
+                case .success(_):
+                DispatchQueue.main.async {
+                    self.switchToTabBarController()
+                }
+                    print("Профиль получен и создан успешно")
+                case .failure(_):
+                    print("Ошибка при получении профиля")
+                }
+            }
     }
 }
 

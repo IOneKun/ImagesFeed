@@ -2,19 +2,30 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     
+    
     private let avatarImageView = UIImageView()
     private let nameLabel = UILabel()
     private let loginNameLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let logoutButton = UIButton()
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        updateUI()
+    }
+        
+    private func updateUI() {
+        guard let profile = ProfileService.shared.profile else {
+            print("Профиль не найден")
+            return
+        }
+        nameLabel.text = profile.name
+        loginNameLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio ?? "Информация не указана"
     }
     
     private func setupUI() {
-        
         setupAvatarImageView()
         setupNameLabel()
         setupLoginNameLabel()
@@ -87,7 +98,6 @@ final class ProfileViewController: UIViewController {
             logoutButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-    
     
     @objc private func didTapExitButton() {
     }
