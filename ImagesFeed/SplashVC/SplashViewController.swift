@@ -60,6 +60,14 @@ extension SplashViewController: AuthViewControllerDelegate {
         }
         fetchProfile(token)
         print("Подготовка профиля началась...")
+        
+        if let username = profileService.profile?.username {
+            ProfileImageService.shared.fetchProfileImageURL(username: username) { _ in
+                DispatchQueue.main.async {
+                    self.switchToTabBarController()
+                }
+            }
+        }
     }
   
     private func fetchProfile(_ token: String) {
@@ -77,7 +85,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                 case .failure(_):
                     print("Ошибка при получении профиля")
                 }
-            }
+        }
     }
 }
 

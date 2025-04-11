@@ -8,13 +8,29 @@ final class ProfileViewController: UIViewController {
     private let loginNameLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let logoutButton = UIButton()
+    private var profileImageServiceObserver: NSObjectProtocol?
         
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         updateUI()
-    }
         
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main) { [weak self] _ in
+             guard let self = self else { return }
+            self.updateAvatar()
+        }
+        updateAvatar()
+    }
+    
+    func updateAvatar() {
+        guard let profileImageURL = ProfileImageService.shared.avatarURL,
+              let url = URL(string: profileImageURL)
+        else { return }
+    }
+    
     private func updateUI() {
         guard let profile = ProfileService.shared.profile else {
             print("Профиль не найден")

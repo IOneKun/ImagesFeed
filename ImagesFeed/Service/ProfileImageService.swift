@@ -6,6 +6,7 @@ final class ProfileImageService {
     static let shared = ProfileImageService()
     private init () {}
     private(set) var avatarURL: String?
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     
     enum ProfileImageServiceError: Error {
         case invalidURL
@@ -44,6 +45,9 @@ final class ProfileImageService {
             } catch {
                 completion(.failure(error))
             }
+            NotificationCenter.default.post(name: ProfileImageService.didChangeNotification,
+                                            object: self,
+                                            userInfo: ["URL": self.avatarURL ?? "No Avatar"])
         }
         task.resume()
     }
