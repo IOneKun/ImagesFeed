@@ -52,9 +52,22 @@ extension AuthViewController: WebViewControllerDelegate {
                 delegate?.authViewController(self, didAuthenticateWithCode: code)
             case .failure(let error):
                 print("Ошибка получения токена \(error)")
+                self.showErrorAlert(error: error)
             }
         }
         UIBlockingProgressHUD.dismiss()
+    }
+    
+    private func showErrorAlert(error: Error) {
+        let alertController = UIAlertController(title: "Что-то пошло не так",
+                                                message: "Не удалось войти в систему",
+                                                preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "Ok", style: .default) { _ in
+            alertController.dismiss(animated: true, completion: nil)
+        }
+        alertController.addAction(okAction)
+        self.present(alertController, animated: true, completion: nil)
     }
     
     func webViewControllerDidCancel(_ vc: WebViewController) {

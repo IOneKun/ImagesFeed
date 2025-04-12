@@ -7,6 +7,7 @@ final class ProfileImageService {
     private init () {}
     private(set) var avatarURL: String?
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    private let client = NetworkClient()
     
     enum ProfileImageServiceError: Error {
         case invalidURL
@@ -16,10 +17,12 @@ final class ProfileImageService {
     
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>)-> Void) {
         guard let token = OAuth2TokenStorage().token else {
+            print("[ProfileImageService]: NetworkError - Токен не найден")
             completion(.failure(ProfileImageServiceError.noToken))
             return
         }
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
+            print("[ProfileImageService]: NetworkError - Неверный URL для запроса: \(username)")
             completion(.failure(ProfileImageServiceError.invalidURL))
             return
         }
@@ -27,27 +30,22 @@ final class ProfileImageService {
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
-        let task = urlSession.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            guard let data = data else {
-                completion(.failure(ProfileImageServiceError.noData))
-                return
-            }
+        let task = client.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
+            guard let self = self else { return }
             
-            do {
-                let userResult = try JSONDecoder().decode(UserResult.self, from: data)
+            switch result {
+            case .success(let userResult):
                 self.avatarURL = userResult.avatarPhoto.small
                 completion(.success(userResult.avatarPhoto.small))
-                print("Фото получено")
-            } catch {
+                NotificationCenter.default.post(
+                    name: ProfileImageService.didChangeNotification,
+                    object: self,
+                    userInfo: ["URL": self.avatarURL ?? ""]
+                )
+            case .failure(let error):
+                print("[ProfileImageService]: \(type(of: error)) - \(error.localizedDescription), код ошибки: \(error)")
                 completion(.failure(error))
             }
-            NotificationCenter.default.post(name: ProfileImageService.didChangeNotification,
-                                            object: self,
-                                            userInfo: ["URL": self.avatarURL ?? "No Avatar"])
         }
         task.resume()
     }

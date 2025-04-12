@@ -44,6 +44,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6F5268C42DA9C61300B8C078 /* NetworkClient */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NetworkClient;
+			sourceTree = "<group>";
+		};
 		6FBEAEC32D68A4BE007558E0 /* ImagesFeed */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -93,6 +98,7 @@
 		6FBEAEB82D68A4BD007558E0 = {
 			isa = PBXGroup;
 			children = (
+				6F5268C42DA9C61300B8C078 /* NetworkClient */,
 				6FBEAEC32D68A4BE007558E0 /* ImagesFeed */,
 				6FBEAEDA2D68A4BF007558E0 /* ImagesFeedTests */,
 				6FBEAEE42D68A4BF007558E0 /* ImagesFeedUITests */,
@@ -127,6 +133,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				6F5268C42DA9C61300B8C078 /* NetworkClient */,
 				6FBEAEC32D68A4BE007558E0 /* ImagesFeed */,
 			);
 			name = ImagesFeed;

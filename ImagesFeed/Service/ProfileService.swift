@@ -2,10 +2,15 @@ import Foundation
 
 final class ProfileService {
     
+    enum NetworkError: Error {
+        case requestError
+    }
+    
     static let shared = ProfileService()
     private let urlSession = URLSession.shared
     private let baseURL = "https://api.unsplash.com"
     private(set) var profile: Profile?
+    let client = NetworkClient()
     
     private func makeProfileRequest(token: String) -> URLRequest? {
         guard let url = URL(string: "\(baseURL)/me") else {
@@ -20,43 +25,30 @@ final class ProfileService {
     
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         guard let request = makeProfileRequest(token: token) else {
-            //TODO: Поменять это
-            completion(.failure(NSError(domain: "ProfileService", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create request"])))
+            print("[ProfileService]: NetworkError - Ошибка в создании запроса")
+            completion(.failure(NetworkError.requestError))
             return
         }
-        let task = urlSession.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            guard let data = data else {
-                //TODO: Поменять это
-                completion(.failure(NSError(domain: "ProfileService", code: 0, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
-                return
-            }
-            if let data = String(data: data, encoding: .utf8) {
-                print("\(data)")
-            } else {
-                print("Не удалось получить данные")
-            }
+        let task = client.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+            guard let self = self else { return }
             
-            do {
-                let decoder = JSONDecoder()
-                let profileResult = try decoder.decode(ProfileResult.self, from: data)
+            switch result {
+            case .success(let profileResult):
                 let name = (profileResult.firstName ?? "") + " " + (profileResult.lastName ?? "")
                 let loginName = "@" + (profileResult.username ?? "")
-                let profile = Profile(username: profileResult.username ?? "",
-                                      name: name,
-                                      loginName: loginName,
-                                      bio: profileResult.bio)
-                print("Получен профиль: \(profileResult)")
+                let profile = Profile(
+                    username: profileResult.username ?? "",
+                    name: name,
+                    loginName: loginName,
+                    bio: profileResult.bio
+                )
                 self.profile = profile
-                DispatchQueue.main.async {
-                    completion(.success(profile))
-                }
-            } catch {
+                print("Профиль получен")
+                completion(.success(profile))
+                
+            case .failure(let error):
+                print("[ProfileService]: \(type(of: error)) - \(error.localizedDescription), с кодом: \(error)")
                 completion(.failure(error))
-                print("Профиль из \(data) не декодировался")
             }
         }
         task.resume()

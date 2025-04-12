@@ -30,9 +30,11 @@ extension URLSession {
                 print("URLSession Error: \(error.localizedDescription)")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
             } else {
+                print("Неизвестная ошибка URLSession")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
             }
         })
         return task
     }
 }
+

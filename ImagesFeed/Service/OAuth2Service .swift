@@ -11,6 +11,7 @@ final class OAuth2Service {
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     private var lastCode: String?
+    private let client = NetworkClient()
     
     
     func makeOAuthTokenRequest(code: String) -> URLRequest? {
@@ -59,33 +60,24 @@ final class OAuth2Service {
         lastCode = code
         
         guard let request = makeOAuthTokenRequest(code: code) else {
-            print("Не удалось создать URLrequest для OAuthToken")
+            print("[OAuth2Service]: NetworkError - Неверные URL Components")
             completion(.failure(NetworkError.invalidURLComponents))
             return
         }
-        let task = urlSession.dataTask(with: request) { [weak self] data, response, error in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                
-                self.task = nil
-                self.lastCode = nil
-                
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                guard let data = data else {
-                    completion(.failure(AuthServiceError.invalidRequest))
-                    return
-                }
-                do {
-                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    let token = tokenResponse.accessToken
-                    OAuth2TokenStorage().token = token
-                    completion(.success(token))
-                } catch {
-                    completion(.failure(error))
-                }
+        let task = client.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            guard let self = self else { return }
+            
+            self.task = nil
+            self.lastCode = nil
+            
+            switch result {
+            case .success(let tokenResponse):
+                let token = tokenResponse.accessToken
+                OAuth2TokenStorage().token = token
+                completion(.success(token))
+            case .failure(let error):
+                print("[OAuth2Service]: \(type(of: error)) - \(error.localizedDescription), код ошибки: \(error)")
+                completion(.failure(error))
             }
         }
         self.task = task
