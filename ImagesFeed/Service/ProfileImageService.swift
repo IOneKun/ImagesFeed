@@ -21,6 +21,7 @@ final class ProfileImageService {
             completion(.failure(ProfileImageServiceError.noToken))
             return
         }
+        print("Токен для создания аватара найден")
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
             print("[ProfileImageService]: NetworkError - Неверный URL для запроса: \(username)")
             completion(.failure(ProfileImageServiceError.invalidURL))
@@ -35,13 +36,15 @@ final class ProfileImageService {
             
             switch result {
             case .success(let userResult):
-                self.avatarURL = userResult.avatarPhoto.small
-                completion(.success(userResult.avatarPhoto.small))
+                print("Ответ с сервера (userResult): \(userResult)")
+                self.avatarURL = userResult.profileImage.small
+                completion(.success(userResult.profileImage.small))
                 NotificationCenter.default.post(
                     name: ProfileImageService.didChangeNotification,
                     object: self,
                     userInfo: ["URL": self.avatarURL ?? ""]
                 )
+                print("AvatarURL: \(userResult.profileImage.small)")
             case .failure(let error):
                 print("[ProfileImageService]: \(type(of: error)) - \(error.localizedDescription), код ошибки: \(error)")
                 completion(.failure(error))

@@ -3,7 +3,7 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     private let showAuthScreenSegueIdentifier = "ShowAuthenticationScreen"
-    private let profileService = ProfileService.shared 
+    private let profileService = ProfileService.shared
     private let tokenStorage = OAuth2TokenStorage()
     
     override func viewDidAppear(_ animated: Bool) {
@@ -60,31 +60,26 @@ extension SplashViewController: AuthViewControllerDelegate {
         }
         fetchProfile(token)
         print("Подготовка профиля началась...")
-        
-        if let username = profileService.profile?.username {
-            ProfileImageService.shared.fetchProfileImageURL(username: username) { _ in
-                DispatchQueue.main.async {
-                    self.switchToTabBarController()
-                }
-            }
-        }
     }
-  
+    
     private func fetchProfile(_ token: String) {
-            guard let token = OAuth2TokenStorage().token else {
-                print("Токена нет")
-                return
+        guard let token = OAuth2TokenStorage().token else {
+            print("Токена нет")
+            return
+        }
+        profileService.fetchProfile(token) { result in
+            switch result {
+            case .success(let profile):
+                print("Профиль получен и создан успешно")
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in
+                    print("Вызов FetchProfileImageURL")
+                    DispatchQueue.main.async {
+                        self.switchToTabBarController()
+                    }
+                }
+            case .failure(_):
+                print("Ошибка при получении профиля")
             }
-            profileService.fetchProfile(token) { result in
-                switch result {
-                case .success(_):
-                DispatchQueue.main.async {
-                    self.switchToTabBarController()
-                }
-                    print("Профиль получен и создан успешно")
-                case .failure(_):
-                    print("Ошибка при получении профиля")
-                }
         }
     }
 }

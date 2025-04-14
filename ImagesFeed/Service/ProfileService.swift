@@ -42,6 +42,7 @@ final class ProfileService {
                     loginName: loginName,
                     bio: profileResult.bio
                 )
+                print("Username для загрузки аватарки: \(profile.username)")
                 self.profile = profile
                 print("Профиль получен")
                 completion(.success(profile))

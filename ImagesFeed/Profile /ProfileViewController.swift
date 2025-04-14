@@ -1,5 +1,5 @@
 import UIKit
-
+import Kingfisher
 final class ProfileViewController: UIViewController {
     
     
@@ -19,16 +19,25 @@ final class ProfileViewController: UIViewController {
             forName: ProfileImageService.didChangeNotification,
             object: nil,
             queue: .main) { [weak self] _ in
+                print("Нотификация пришла")
              guard let self = self else { return }
+                print("Notification пришёл в ProfileViewController")
             self.updateAvatar()
         }
         updateAvatar()
     }
     
     func updateAvatar() {
+        print("Обновление аватара вызвано")
+        print("AvatarURL = \(ProfileImageService.shared.avatarURL ?? "nil")")
+        
         guard let profileImageURL = ProfileImageService.shared.avatarURL,
               let url = URL(string: profileImageURL)
-        else { return }
+        else { print("Неверный или пустой URL аватара")
+            return
+        }
+        print("Загрузка аватара по URL: \(url)")
+        avatarImageView.kf.setImage(with: url, placeholder: UIImage(named: "login_avatar"))
     }
     
     private func updateUI() {

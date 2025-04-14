@@ -22,7 +22,7 @@ final class NetworkClient {
                     } else {
                         print("Не удалось декодировать данные в строку")
                     }
-                } 
+                }
             case .failure(let error):
                 print("Ошибка загрузки данных: \(error.localizedDescription)")
                 completion(.failure(error))

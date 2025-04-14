@@ -1,10 +1,10 @@
 import Foundation
 
 struct UserResult: Codable {
-    let avatarPhoto: ProfileImage
+    let profileImage: ProfileImage
     
     enum CodingKeys: String, CodingKey {
-        case avatarPhoto = "profile_image"
+        case profileImage = "profile_image"
     }
 }
 
