@@ -9,7 +9,7 @@ final class ProfileViewController: UIViewController {
     private let descriptionLabel = UILabel()
     private let logoutButton = UIButton()
     private var profileImageServiceObserver: NSObjectProtocol?
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.ypBlack
@@ -21,10 +21,10 @@ final class ProfileViewController: UIViewController {
             object: nil,
             queue: .main) { [weak self] _ in
                 print("Нотификация пришла")
-             guard let self = self else { return }
-                print("Notification пришёл в ProfileViewController")
-            self.updateAvatar()
-        }
+                guard let self = self else { return }
+                print("Нотификация пришла в ProfileViewController")
+                self.updateAvatar()
+            }
         updateAvatar()
     }
     

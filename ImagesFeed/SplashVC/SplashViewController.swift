@@ -1,44 +1,33 @@
 import Foundation
 import UIKit
-import SwiftKeychainWrapper
 
 final class SplashViewController: UIViewController {
-    private let showAuthScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let profileService = ProfileService.shared
     private let tokenStorage = OAuth2TokenStorage()
     private let imageView = UIImageView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
     }
     
-    func setupUI() {
-        let image = UIImage(named: "splash_screen_logo")
-        imageView.image = image
-        imageView.contentMode = .scaleAspectFit
-        
-        view.addSubview(imageView)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([ imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                                      imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-                                    ])
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         if let token = tokenStorage.token  {
             print("Сохраненный токен найден \(token)")
             fetchProfile(token)
         } else {
             let storyboard = UIStoryboard(name: "Main", bundle: .main)
-            let authVC = storyboard.instantiateViewController(withIdentifier: "AuthViewController")
+            guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
+                print("Не удалось найти AuthViewController")
+                return
+            }
+            authViewController.delegate = self
             
-            
-            authVC.modalPresentationStyle = .fullScreen
-            self.present(authVC, animated: true)
+            let navigationVC = UINavigationController(rootViewController: authViewController)
+            navigationVC.modalPresentationStyle = .fullScreen
+            self.present(navigationVC, animated: true)
         }
     }
     
@@ -59,8 +48,18 @@ final class SplashViewController: UIViewController {
         let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarController")
         window.rootViewController = tabBarController
     }
+    
+    private func setupUI() {
+        let image = UIImage(named: "splash_screen_logo")
+        imageView.image = image
+        imageView.contentMode = .scaleAspectFit
+        view.addSubview(imageView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([ imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)])
+    }
 }
-
 
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {

@@ -13,11 +13,13 @@ final class AuthViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showWebViewSegueIdentifier {
-            guard let webViewController = segue.destination as? WebViewController else {
+            guard let webViewController = segue.destination as? WebViewController
+            else {
                 assertionFailure("Не удалось выполнить переход по \(showWebViewSegueIdentifier)")
-                return 
+                return
             }
             webViewController.delegate = self
+            print("Переход на webViewController выполнен")
         } else {
             super.prepare(for: segue, sender: sender)
         }
