@@ -1,19 +1,44 @@
 import Foundation
 import UIKit
+import SwiftKeychainWrapper
 
 final class SplashViewController: UIViewController {
     private let showAuthScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let profileService = ProfileService.shared
     private let tokenStorage = OAuth2TokenStorage()
+    private let imageView = UIImageView()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+    }
+    
+    func setupUI() {
+        let image = UIImage(named: "splash_screen_logo")
+        imageView.image = image
+        imageView.contentMode = .scaleAspectFit
+        
+        view.addSubview(imageView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([ imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                                      imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+                                    ])
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         if let token = tokenStorage.token  {
             print("Сохраненный токен найден \(token)")
             fetchProfile(token)
         } else {
-            performSegue(withIdentifier: showAuthScreenSegueIdentifier, sender: nil)
+            let storyboard = UIStoryboard(name: "Main", bundle: .main)
+            let authVC = storyboard.instantiateViewController(withIdentifier: "AuthViewController")
+            
+            
+            authVC.modalPresentationStyle = .fullScreen
+            self.present(authVC, animated: true)
         }
     }
     
@@ -33,21 +58,6 @@ final class SplashViewController: UIViewController {
         }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarController")
         window.rootViewController = tabBarController
-    }
-}
-
-extension SplashViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showAuthScreenSegueIdentifier {
-            guard let navigationController = segue.destination as? UINavigationController,
-                  let viewController = navigationController.viewControllers.first as? AuthViewController else {
-                print("Не удалось выполнить переход по \(showAuthScreenSegueIdentifier)")
-                return
-            }
-            viewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
     }
 }
 
