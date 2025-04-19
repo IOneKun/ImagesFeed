@@ -1,8 +1,18 @@
 import Foundation
 
+enum AuthServiceError: Error {
+    case invalidRequest
+}
+
 final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
+    
+    private let urlSession = URLSession.shared
+    private var task: URLSessionTask?
+    private var lastCode: String?
+    private let client = NetworkClient()
+    
     
     func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard let baseURL = URL(string: Constants.baseURLString) else {
@@ -32,31 +42,45 @@ final class OAuth2Service {
     }
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        
+        if task != nil {
+            if lastCode != code {
+                task?.cancel()
+            } else {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+        } else {
+            if lastCode == code {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+        }
+        lastCode = code
+        
         guard let request = makeOAuthTokenRequest(code: code) else {
-            print("Не удалось создать URLrequest для OAuthToken")
+            print("[OAuth2Service]: NetworkError - Неверные URL Components")
             completion(.failure(NetworkError.invalidURLComponents))
             return
         }
-        let task = URLSession.shared.data(for: request) { result in
+        let task = client.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            guard let self = self else { return }
+            
+            self.task = nil
+            self.lastCode = nil
+            
             switch result {
-            case .success(let data):
-                do {
-                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    let token = tokenResponse.accessToken
-                    
-                    OAuth2TokenStorage().token = token
-                    
-                    completion(.success(token))
-                    print("Токен успешн получен")
-                } catch {
-                    print("Ошибка декодирования: \(error)")
-                    completion(.failure(error))
-                }
+            case .success(let tokenResponse):
+                let token = tokenResponse.accessToken
+                OAuth2TokenStorage().token = token
+                completion(.success(token))
             case .failure(let error):
-                print("Ошибка сети: \(error)")
+                print("[OAuth2Service]: \(type(of: error)) - \(error.localizedDescription), код ошибки: \(error)")
                 completion(.failure(error))
             }
         }
+        self.task = task
         task.resume()
     }
 }
