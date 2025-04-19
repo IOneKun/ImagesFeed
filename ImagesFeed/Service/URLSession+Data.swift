@@ -24,13 +24,13 @@ extension URLSession {
                     fulfillCompletionOnTheMainThread(.success(data))
                 } else {
                     fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
-                    print("Некорректный ответ сервера")
+                    print("[URLSession.data]: NetworkError - статус код \(statusCode), URL: \(request.url?.absoluteString ?? "nil")")
                 }
             } else if let error = error {
-                print("URLSession Error: \(error.localizedDescription)")
+                print("[URLSession.data]: URLRequestError - \(error.localizedDescription), URL: \(request.url?.absoluteString ?? "nil")")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
             } else {
-                print("Неизвестная ошибка URLSession")
+                print("[URLSession.data]: URLSessionError - неизвестная ошибка, URL: \(request.url?.absoluteString ?? "nil")")
                 fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
             }
         })

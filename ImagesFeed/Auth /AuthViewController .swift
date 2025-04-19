@@ -48,6 +48,7 @@ extension AuthViewController: WebViewControllerDelegate {
     private func fetchOAuthToken(_ code: String) {
         oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
             guard let self = self else { return }
+            UIBlockingProgressHUD.dismiss()
             switch result {
             case .success:
                 print("Авторизация успешна, токен получен")
@@ -57,7 +58,6 @@ extension AuthViewController: WebViewControllerDelegate {
                 self.showErrorAlert(error: error)
             }
         }
-        UIBlockingProgressHUD.dismiss()
     }
     
     private func showErrorAlert(error: Error) {

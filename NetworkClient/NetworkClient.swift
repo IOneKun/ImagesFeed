@@ -15,16 +15,16 @@ final class NetworkClient {
                     let decodedObject = try decoder.decode(T.self, from: data)
                     completion(.success(decodedObject))
                 } catch {
-                    print("Ошибка декодирования: \(error.localizedDescription)")
+                    print("[NetworkClient.objectTask]: DecodingError - \(error.localizedDescription)")
                     completion(.failure(error))
                     if let stringData = String(data: data, encoding: .utf8) {
-                        print("Полученные данные: \(stringData)")
+                        print("[NetworkClient.objectTask]: Данные ответа: \(stringData)")
                     } else {
-                        print("Не удалось декодировать данные в строку")
+                        print("[NetworkClient.objectTask]: Не удалось преобразовать данные в строку")
                     }
                 }
             case .failure(let error):
-                print("Ошибка загрузки данных: \(error.localizedDescription)")
+                print("[NetworkClient.objectTask]: NetworkError - \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }
