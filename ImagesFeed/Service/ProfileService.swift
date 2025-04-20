@@ -11,6 +11,7 @@ final class ProfileService {
     private let baseURL = "https://api.unsplash.com"
     private(set) var profile: Profile?
     let client = NetworkClient()
+    private init() {} 
     
     private func makeProfileRequest(token: String) -> URLRequest? {
         guard let url = URL(string: "\(baseURL)/me") else {

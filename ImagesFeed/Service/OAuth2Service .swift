@@ -13,34 +13,6 @@ final class OAuth2Service {
     private var lastCode: String?
     private let client = NetworkClient()
     
-    
-    func makeOAuthTokenRequest(code: String) -> URLRequest? {
-        guard let baseURL = URL(string: Constants.baseURLString) else {
-            print("Некорректный базовый URL: \(Constants.baseURLString)")
-            return nil
-        }
-        
-        var components = URLComponents()
-        components.path = "/oauth/token"
-        components.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "client_secret", value: Constants.secretKey),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "code", value: code),
-            URLQueryItem(name: "grant_type", value: "authorization_code")
-        ]
-        
-        guard let url = components.url(relativeTo: baseURL) else {
-            assertionFailure("Не удалось создать URL для OAuth")
-            print("Не удалось создать URL. BaseURL: \(baseURL.absoluteString), Path: \(components.path)")
-            return nil
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        return request
-    }
-    
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         
@@ -83,4 +55,32 @@ final class OAuth2Service {
         self.task = task
         task.resume()
     }
+    
+    func makeOAuthTokenRequest(code: String) -> URLRequest? {
+        guard let baseURL = URL(string: Constants.baseURLString) else {
+            print("Некорректный базовый URL: \(Constants.baseURLString)")
+            return nil
+        }
+        
+        var components = URLComponents()
+        components.path = "/oauth/token"
+        components.queryItems = [
+            URLQueryItem(name: "client_id", value: Constants.accessKey),
+            URLQueryItem(name: "client_secret", value: Constants.secretKey),
+            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
+            URLQueryItem(name: "code", value: code),
+            URLQueryItem(name: "grant_type", value: "authorization_code")
+        ]
+        
+        guard let url = components.url(relativeTo: baseURL) else {
+            assertionFailure("Не удалось создать URL для OAuth")
+            print("Не удалось создать URL. BaseURL: \(baseURL.absoluteString), Path: \(components.path)")
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        return request
+    }
 }
+
