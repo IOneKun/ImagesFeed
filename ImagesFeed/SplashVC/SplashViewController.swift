@@ -3,9 +3,7 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     private let profileService = ProfileService.shared
-    private let tokenStorage = OAuth2TokenStorage()
     private let imageView = UIImageView()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -14,7 +12,7 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if let token = tokenStorage.token  {
+        if let token = OAuth2TokenStorage.share.token  {
             print("Сохраненный токен найден \(token)")
             fetchProfile(token)
         } else {
@@ -63,7 +61,7 @@ final class SplashViewController: UIViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        guard let token = tokenStorage.token else {
+        guard let token = OAuth2TokenStorage.share.token else {
             print("Токен отсутствует после авторизации")
             return
         }
@@ -72,7 +70,7 @@ extension SplashViewController: AuthViewControllerDelegate {
     }
     
     private func fetchProfile(_ token: String) {
-        guard let token = OAuth2TokenStorage().token else {
+        guard let token = OAuth2TokenStorage.share.token else {
             print("Токена нет")
             return
         }

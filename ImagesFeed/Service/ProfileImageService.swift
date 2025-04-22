@@ -16,7 +16,7 @@ final class ProfileImageService {
     }
     
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>)-> Void) {
-        guard let token = OAuth2TokenStorage().token else {
+        guard let token = OAuth2TokenStorage.share.token else {
             print("[ProfileImageService]: NetworkError - Токен не найден")
             completion(.failure(ProfileImageServiceError.noToken))
             return

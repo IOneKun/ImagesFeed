@@ -69,7 +69,7 @@ extension AuthViewController: WebViewControllerDelegate {
             alertController.dismiss(animated: true, completion: nil)
         }
         alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
     
     func webViewControllerDidCancel(_ vc: WebViewController) {
