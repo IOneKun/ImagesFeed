@@ -1,20 +1,57 @@
 import UIKit
-
+import Kingfisher
 final class ProfileViewController: UIViewController {
+    
     
     private let avatarImageView = UIImageView()
     private let nameLabel = UILabel()
     private let loginNameLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let logoutButton = UIButton()
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor.ypBlack
         setupUI()
+        updateUI()
+        
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main) { [weak self] _ in
+                print("Нотификация пришла")
+                guard let self = self else { return }
+                print("Нотификация пришла в ProfileViewController")
+                self.updateAvatar()
+            }
+        updateAvatar()
+    }
+    
+    func updateAvatar() {
+        print("Обновление аватара вызвано")
+        print("AvatarURL = \(ProfileImageService.shared.avatarURL ?? "nil")")
+        
+        guard let profileImageURL = ProfileImageService.shared.avatarURL,
+              let url = URL(string: profileImageURL)
+        else { print("Неверный или пустой URL аватара")
+            return
+        }
+        print("Загрузка аватара по URL: \(url)")
+        avatarImageView.kf.setImage(with: url, placeholder: UIImage(named: "login_avatar"))
+    }
+    
+    private func updateUI() {
+        guard let profile = ProfileService.shared.profile else {
+            print("Профиль не найден")
+            return
+        }
+        nameLabel.text = profile.name
+        loginNameLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio ?? "Информация не указана"
     }
     
     private func setupUI() {
-        
         setupAvatarImageView()
         setupNameLabel()
         setupLoginNameLabel()
@@ -87,7 +124,6 @@ final class ProfileViewController: UIViewController {
             logoutButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-    
     
     @objc private func didTapExitButton() {
     }

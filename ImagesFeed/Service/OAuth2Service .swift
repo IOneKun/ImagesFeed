@@ -1,8 +1,53 @@
 import Foundation
 
+enum AuthServiceError: Error {
+    case invalidRequest
+}
+
 final class OAuth2Service {
     static let shared = OAuth2Service()
     private init() {}
+    
+    private let urlSession = URLSession.shared
+    private var task: URLSessionTask?
+    private var lastCode: String?
+    private let client = NetworkClient()
+    
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        
+        if lastCode == code {
+            completion(.failure(AuthServiceError.invalidRequest))
+            return
+        }
+
+        task?.cancel()
+        lastCode = code
+        
+        guard let request = makeOAuthTokenRequest(code: code) else {
+            print("[OAuth2Service]: NetworkError - Неверные URL Components")
+            completion(.failure(NetworkError.invalidURLComponents))
+            return
+        }
+        let task = client.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            guard let self = self else { return }
+            
+            self.task = nil
+            self.lastCode = nil
+            
+            switch result {
+            case .success(let tokenResponse):
+                let token = tokenResponse.accessToken
+                OAuth2TokenStorage.share.token = token
+                completion(.success(token))
+            case .failure(let error):
+                print("[OAuth2Service]: \(type(of: error)) - \(error.localizedDescription), код ошибки: \(error)")
+                completion(.failure(error))
+            }
+        }
+        self.task = task
+        task.resume()
+    }
     
     func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard let baseURL = URL(string: Constants.baseURLString) else {
@@ -30,33 +75,5 @@ final class OAuth2Service {
         request.httpMethod = "POST"
         return request
     }
-    
-    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let request = makeOAuthTokenRequest(code: code) else {
-            print("Не удалось создать URLrequest для OAuthToken")
-            completion(.failure(NetworkError.invalidURLComponents))
-            return
-        }
-        let task = URLSession.shared.data(for: request) { result in
-            switch result {
-            case .success(let data):
-                do {
-                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    let token = tokenResponse.accessToken
-                    
-                    OAuth2TokenStorage().token = token
-                    
-                    completion(.success(token))
-                    print("Токен успешн получен")
-                } catch {
-                    print("Ошибка декодирования: \(error)")
-                    completion(.failure(error))
-                }
-            case .failure(let error):
-                print("Ошибка сети: \(error)")
-                completion(.failure(error))
-            }
-        }
-        task.resume()
-    }
 }
+
