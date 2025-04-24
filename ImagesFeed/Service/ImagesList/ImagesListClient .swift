@@ -3,8 +3,8 @@ import Foundation
 final class ImagesListClient {
     
     static let shared = ImagesListClient()
-    private let client = NetworkClient()
-    private let photosPerPage = 10
+    let client = NetworkClient()
+    let photosPerPage = 10
     
     func fetchPhotos(page: Int, completion: @escaping (Result<[Photo], Error>)-> Void) {
         guard var urlComponents = URLComponents(string: "https://api.unsplash.com/photos") else {

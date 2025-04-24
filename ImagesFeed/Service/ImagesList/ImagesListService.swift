@@ -3,11 +3,10 @@ import Foundation
 final class ImagesListService {
     static let shared = ImagesListService()
    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
-    private(set) var photos: [Photo] = []
-    private var lastLoadedPage: Int?
-    private var isLoading = false
+    var photos: [Photo] = []
+    var lastLoadedPage: Int?
+    var isLoading = false
     
-    private init() {}
     
     func fetchPhotosNextPage() {
         guard !isLoading else { return }
@@ -23,8 +22,12 @@ final class ImagesListService {
             switch result {
             case .success(let newPhotos):
                 self.lastLoadedPage = nextPage
+                
+                let filteredPhotos = newPhotos.filter { newPhotos in
+                    !self.photos.contains(where: { $0.id == newPhotos.id })
+                }
                 DispatchQueue.main.async{
-                    self.photos.append(contentsOf: newPhotos)
+                    self.photos.append(contentsOf: filteredPhotos)
                     NotificationCenter.default.post(
                         name: ImagesListService.didChangeNotification,
                         object: self

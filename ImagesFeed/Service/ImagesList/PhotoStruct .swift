@@ -37,7 +37,7 @@ struct Photo {
     let welcomeDescription: String?
     let thumbImageUrl: URL
     let isLiked: Bool
-    
+    let fullImageURL: URL
     
 }
 
@@ -49,5 +49,6 @@ extension Photo {
         self.welcomeDescription = result.description
         self.thumbImageUrl = URL(string: result.urls.thumb)!
         self.isLiked = result.likedByUser
+        self.fullImageURL = URL(string: result.urls.full)!
     }
 }
