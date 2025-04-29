@@ -1,7 +1,31 @@
 import UIKit
 import Kingfisher
 
-final class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController, ImagesListCellDelegate {
+    func imagesListCellDidTapLike(_ cell: ImagesListCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        UIBlockingProgressHUD.show()
+        let photo = photos[indexPath.row]
+        ImagesListService.shared.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success:
+                DispatchQueue.main.async {
+                    self.photos = ImagesListService.shared.photos
+                    cell.setIsLiked(self.photos[indexPath.row].isLiked)
+                    UIBlockingProgressHUD.dismiss()
+                }
+                case .failure(let error):
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                    print("Ошибка при лайке \(error)")
+                    let alert = UIAlertController(title: "Ошибка", message: "Не удалось поставить лайк", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                }
+            }
+        }
+    }
+    
     
     @IBOutlet private var tableView: UITableView!
     
@@ -84,6 +108,7 @@ extension ImagesListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         configCell(for: imageListCell, with: indexPath)
+        imageListCell.delegate = self
         
         return imageListCell
     }
@@ -91,16 +116,13 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        
+        cell.delegate = self
         let photo = photos[indexPath.row]
         cell.setImage(url: photo.thumbImageUrl) {
         }
         
+        cell.setIsLiked(photo.isLiked)
         cell.dateLabel.text = dateFormatter.string(from: photo.createdAt)
-        
-        let isLiked = indexPath.row % 2 == 0
-        let likeImage = isLiked ? UIImage(named: "like_Button") : UIImage(named: "dislike_Button")
-        cell.likeButton.setImage(likeImage, for: .normal)
     }
     
     private func updateTableViewAnimated() {

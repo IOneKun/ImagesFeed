@@ -41,6 +41,10 @@ struct Photo {
     
 }
 
+struct LikePhotoResult: Decodable {
+    let photo: PhotoResult 
+}
+
 extension Photo {
     init(from result: PhotoResult) {
         self.id = result.id

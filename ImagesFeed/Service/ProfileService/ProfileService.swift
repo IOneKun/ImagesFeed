@@ -20,7 +20,6 @@ final class ProfileService {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        print("Токен получен")
         return request
     }
     

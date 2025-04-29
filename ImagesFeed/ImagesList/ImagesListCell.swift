@@ -1,11 +1,22 @@
 import UIKit
 import Kingfisher
 
+protocol ImagesListCellDelegate: AnyObject {
+    func imagesListCellDidTapLike(_ cell: ImagesListCell)
+}
+
 final class ImagesListCell: UITableViewCell {
     
     @IBOutlet weak var cellImage: UIImageView!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var likeButton: UIButton!
+    
+    weak var delegate: ImagesListCellDelegate?
+    
+    @IBAction func likeButtonClicked(_ sender: UIButton) {
+        print("Лайк нажат")
+        delegate?.imagesListCellDidTapLike(self)
+    }
     
     static let reuseIdentifier = "ImagesListCell"
     
@@ -24,6 +35,10 @@ final class ImagesListCell: UITableViewCell {
         ) { _ in
             completion() 
         }
+    }
+    func setIsLiked(_ isLiked: Bool) {
+        let likeImage = isLiked ? UIImage(named: "like_Button") : UIImage(named: "dislike_Button")
+        likeButton.setImage(likeImage, for: .normal)
     }
 }
 
