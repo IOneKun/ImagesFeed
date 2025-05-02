@@ -83,4 +83,9 @@ final class ImagesListService {
         }
         task.resume()
     }
+    func clean() {
+        photos = []
+        lastLoadedPage = nil
+        isLoading = false 
+    }
 }

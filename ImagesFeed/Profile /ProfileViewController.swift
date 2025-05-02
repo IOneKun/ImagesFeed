@@ -124,8 +124,14 @@ final class ProfileViewController: UIViewController {
             logoutButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-    
+        
     @objc private func didTapExitButton() {
+        ProfileLogoutService.shared.logout()
+        
+        if let window = UIApplication.shared.windows.first {
+            let splashVC = SplashViewController()
+            window.rootViewController = splashVC
+        }
     }
 }
 
