@@ -2,30 +2,6 @@ import UIKit
 import Kingfisher
 
 final class ImagesListViewController: UIViewController, ImagesListCellDelegate {
-    func imagesListCellDidTapLike(_ cell: ImagesListCell) {
-        guard let indexPath = tableView.indexPath(for: cell) else { return }
-        UIBlockingProgressHUD.show()
-        let photo = photos[indexPath.row]
-        ImagesListService.shared.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success:
-                DispatchQueue.main.async {
-                    self.photos = ImagesListService.shared.photos
-                    cell.setIsLiked(self.photos[indexPath.row].isLiked)
-                    UIBlockingProgressHUD.dismiss()
-                }
-                case .failure(let error):
-                DispatchQueue.main.async {
-                    UIBlockingProgressHUD.dismiss()
-                    print("Ошибка при лайке \(error)")
-                    let alert = UIAlertController(title: "Ошибка", message: "Не удалось поставить лайк", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
-                }
-            }
-        }
-    }
-    
     
     @IBOutlet private var tableView: UITableView!
     
@@ -65,9 +41,35 @@ final class ImagesListViewController: UIViewController, ImagesListCellDelegate {
                 return
             }
             let photo = photos[indexPath.row]
-            
+            viewController.fullImageURL = photo.fullImageURL
         } else {
             super.prepare(for: segue, sender: sender)
+        }
+    }
+    
+    func imagesListCellDidTapLike(_ cell: ImagesListCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        
+        UIBlockingProgressHUD.show()
+        
+        let photo = photos[indexPath.row]
+        ImagesListService.shared.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success:
+                DispatchQueue.main.async {
+                    self.photos = ImagesListService.shared.photos
+                    cell.setIsLiked(self.photos[indexPath.row].isLiked)
+                    UIBlockingProgressHUD.dismiss()
+                }
+                case .failure(let error):
+                DispatchQueue.main.async {
+                    UIBlockingProgressHUD.dismiss()
+                    print("Ошибка при лайке \(error)")
+                    let alert = UIAlertController(title: "Ошибка", message: "Не удалось поставить лайк", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                }
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ final class ImagesListService {
         }
     }
     
-    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    func changeLike(photoId: String, isLike: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         
         guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like") else {
             print("[ImagesListService] Неверный URL для запроса лайков")
