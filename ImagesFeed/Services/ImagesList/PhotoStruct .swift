@@ -9,6 +9,7 @@ struct PhotoResult: Decodable {
     let likedByUser: Bool
     let description: String?
     let urls: URLResult
+    let createdAt: String?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -19,6 +20,7 @@ struct PhotoResult: Decodable {
         case likedByUser = "liked_by_user"
         case description
         case urls
+        case createdAt = "created_at"
     }
 }
 
@@ -33,7 +35,7 @@ struct URLResult: Decodable {
 struct Photo {
     let id: String
     let size: CGSize
-    let createdAt: Date
+    let createdAt: Date?
     let welcomeDescription: String?
     let thumbImageUrl: URL
     let isLiked: Bool
@@ -46,12 +48,17 @@ struct LikePhotoResult: Decodable {
 
 extension Photo {
     init(from result: PhotoResult) {
+        let dateFormatter = ISO8601DateFormatter()
         self.id = result.id
         self.size = CGSize(width: result.width, height: result.height)
-        self.createdAt = Date()
         self.welcomeDescription = result.description
         self.thumbImageUrl = URL(string: result.urls.thumb)!
         self.isLiked = result.likedByUser
         self.fullImageURL = URL(string: result.urls.full)!
+        if let createdAtString = result.createdAt {
+            self.createdAt = dateFormatter.date(from: createdAtString)
+        } else {
+            self.createdAt = nil
+        }
     }
 }

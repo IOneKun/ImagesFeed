@@ -34,7 +34,7 @@ final class ImagesListService {
                     )
                 }
             case .failure(let error):
-                print("Ошибка загрузки фото: \(error)")
+                print("[ImagesListService]: Ошибка загрузки фото \(error.localizedDescription)")
             }
         }
     }
@@ -77,13 +77,16 @@ final class ImagesListService {
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
+                    print("[ImagesListService]: Ошибка запроса лайков \(error.localizedDescription)")
                     completion(.failure(error))
                 }
             }
         }
         task.resume()
     }
+    
     func clean() {
+        print("[ImagesListService]: Очистка данных")
         photos = []
         lastLoadedPage = nil
         isLoading = false 

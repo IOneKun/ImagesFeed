@@ -124,7 +124,11 @@ extension ImagesListViewController {
         }
         
         cell.setIsLiked(photo.isLiked)
-        cell.dateLabel.text = dateFormatter.string(from: photo.createdAt)
+        if let date = photo.createdAt {
+            cell.dateLabel.text = dateFormatter.string(from: date)
+        } else {
+            cell.dateLabel.text = ""
+        }
     }
     
     private func updateTableViewAnimated() {

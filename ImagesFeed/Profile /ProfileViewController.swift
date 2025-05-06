@@ -124,14 +124,25 @@ final class ProfileViewController: UIViewController {
             logoutButton.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
-        
+    
     @objc private func didTapExitButton() {
-        ProfileLogoutService.shared.logout()
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Вы действительно хотите выйти?",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "Да", style: .default, handler: { _ in
+            ProfileLogoutService.shared.logout()
+            
+            if let window = UIApplication.shared.windows.first {
+                let splashVC = SplashViewController()
+                window.rootViewController = splashVC
+            }
+        }))
         
-        if let window = UIApplication.shared.windows.first {
-            let splashVC = SplashViewController()
-            window.rootViewController = splashVC
-        }
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel, handler: nil))
+        
+        present(alert, animated: true)
     }
 }
-
