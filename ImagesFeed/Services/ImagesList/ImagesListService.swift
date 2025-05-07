@@ -3,9 +3,9 @@ import Foundation
 final class ImagesListService {
     static let shared = ImagesListService()
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
-    var photos: [Photo] = []
-    var lastLoadedPage: Int?
-    var isLoading = false
+   private var photos: [Photo] = []
+   private var lastLoadedPage: Int?
+   private var isLoading = false
     
     
     func fetchPhotosNextPage() {
