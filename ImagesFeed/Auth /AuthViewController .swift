@@ -49,6 +49,7 @@ extension AuthViewController: WebViewControllerDelegate {
         oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
             guard let self = self else { return }
             UIBlockingProgressHUD.dismiss()
+            
             switch result {
             case .success:
                 print("Авторизация успешна, токен получен")

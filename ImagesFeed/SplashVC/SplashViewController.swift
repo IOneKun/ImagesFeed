@@ -15,6 +15,7 @@ final class SplashViewController: UIViewController {
         if let token = OAuth2TokenStorage.share.token  {
             print("Сохраненный токен найден \(token)")
             fetchProfile(token)
+            
         } else {
             let storyboard = UIStoryboard(name: "Main", bundle: .main)
             guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
