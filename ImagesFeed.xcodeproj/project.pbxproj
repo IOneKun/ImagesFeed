@@ -38,6 +38,22 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6F8136A22DD1246F00D92793 /* Exceptions for "ImagesFeedTests" folder in "ImagesFeed" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WebViewControllerSpy.swift,
+				WebViewPresenterSpy.swift,
+			);
+			target = 6FBEAEC02D68A4BD007558E0 /* ImagesFeed */;
+		};
+		6F8136A32DD1247700D92793 /* Exceptions for "ImagesFeedTests" folder in "ImagesFeedTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WebViewControllerSpy.swift,
+				WebViewPresenterSpy.swift,
+			);
+			target = 6FBEAED62D68A4BF007558E0 /* ImagesFeedTests */;
+		};
 		6FBEAEE92D68A4BF007558E0 /* Exceptions for "ImagesFeed" folder in "ImagesFeed" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -63,6 +79,10 @@
 		};
 		6FBEAEDA2D68A4BF007558E0 /* ImagesFeedTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6F8136A22DD1246F00D92793 /* Exceptions for "ImagesFeedTests" folder in "ImagesFeed" target */,
+				6F8136A32DD1247700D92793 /* Exceptions for "ImagesFeedTests" folder in "ImagesFeedTests" target */,
+			);
 			path = ImagesFeedTests;
 			sourceTree = "<group>";
 		};
