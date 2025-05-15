@@ -123,6 +123,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             logoutButton.widthAnchor.constraint(equalToConstant: 44),
             logoutButton.heightAnchor.constraint(equalToConstant: 44)
         ])
+        logoutButton.accessibilityIdentifier = "logout button"
     }
     
     func showLogoutAlert() {
