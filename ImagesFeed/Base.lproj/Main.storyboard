@@ -46,10 +46,6 @@
                                                     </constraints>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="like_Button"/>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="accessibilityIdentifier" value="like button on"/>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="accessebilityIdentifier" value="like button off"/>
-                                                    </userDefinedRuntimeAttributes>
                                                     <connections>
                                                         <action selector="likeButtonClicked:" destination="JmL-p7-jcJ" eventType="touchUpInside" id="aSX-Wf-k3M"/>
                                                     </connections>

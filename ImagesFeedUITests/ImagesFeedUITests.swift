@@ -49,24 +49,15 @@ final class ImagesFeedUITests: XCTestCase {
         table.swipeUp()
         sleep(2)
         
-        let cellToLike = table.cells.element(boundBy: 1)
-        XCTAssertTrue(cellToLike.waitForExistence(timeout: 5))
+        let cellToLike = table.cells.element(boundBy: 2)
+        XCTAssertTrue(cellToLike.waitForExistence(timeout: 6))
         
+        cellToLike.buttons["like button off"].tap()
+        sleep(4)
         cellToLike.buttons["like button on"].tap()
         
-        sleep(4)
-        cellToLike.buttons["like button off"].tap()
-        
-        
         cellToLike.tap()
         
-        sleep(2)
-        
-        
-        
-        sleep(3)
-        
-        cellToLike.tap()
         sleep(2)
         
         let image = app.scrollViews.images.element(boundBy: 0)
