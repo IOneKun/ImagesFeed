@@ -1,7 +1,14 @@
 import UIKit
+import Foundation
 import Kingfisher
-final class ProfileViewController: UIViewController {
-    
+
+protocol ProfileViewControllerProtocol: AnyObject {
+    func updateUI(_ profile: Profile)
+    func updateAvatar(_ url: URL)
+    func showLogoutAlert()
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
     private let avatarImageView = UIImageView()
     private let nameLabel = UILabel()
@@ -10,11 +17,13 @@ final class ProfileViewController: UIViewController {
     private let logoutButton = UIButton()
     private var profileImageServiceObserver: NSObjectProtocol?
     
+    var presenter: ProfilePresenterProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.ypBlack
         setupUI()
-        updateUI()
+        presenter?.viewDidLoad()
         
         profileImageServiceObserver = NotificationCenter.default.addObserver(
             forName: ProfileImageService.didChangeNotification,
@@ -23,29 +32,20 @@ final class ProfileViewController: UIViewController {
                 print("Нотификация пришла")
                 guard let self = self else { return }
                 print("Нотификация пришла в ProfileViewController")
-                self.updateAvatar()
+                self.presenter?.viewDidLoad()
             }
-        updateAvatar()
     }
     
-    func updateAvatar() {
-        print("Обновление аватара вызвано")
-        print("AvatarURL = \(ProfileImageService.shared.avatarURL ?? "nil")")
-        
-        guard let profileImageURL = ProfileImageService.shared.avatarURL,
-              let url = URL(string: profileImageURL)
-        else { print("Неверный или пустой URL аватара")
-            return
-        }
-        print("Загрузка аватара по URL: \(url)")
+    func configure(_ presenter: ProfilePresenterProtocol) {
+        self.presenter = presenter
+        presenter.setView(self)
+    }
+    
+    func updateAvatar(_ url: URL) {
         avatarImageView.kf.setImage(with: url, placeholder: UIImage(named: "login_avatar"))
     }
     
-    private func updateUI() {
-        guard let profile = ProfileService.shared.profile else {
-            print("Профиль не найден")
-            return
-        }
+    func updateUI(_ profile: Profile) {
         nameLabel.text = profile.name
         loginNameLabel.text = profile.loginName
         descriptionLabel.text = profile.bio ?? "Информация не указана"
@@ -123,15 +123,16 @@ final class ProfileViewController: UIViewController {
             logoutButton.widthAnchor.constraint(equalToConstant: 44),
             logoutButton.heightAnchor.constraint(equalToConstant: 44)
         ])
+        logoutButton.accessibilityIdentifier = "logout button"
     }
     
-    @objc private func didTapExitButton() {
+    func showLogoutAlert() {
         let alert = UIAlertController(
             title: "Пока, пока!",
             message: "Вы действительно хотите выйти?",
             preferredStyle: .alert
         )
-
+        
         alert.addAction(UIAlertAction(title: "Да", style: .default, handler: { _ in
             ProfileLogoutService.shared.logout()
             
@@ -145,4 +146,9 @@ final class ProfileViewController: UIViewController {
         
         present(alert, animated: true)
     }
+    
+    @objc private func didTapExitButton() {
+        presenter?.didTapExitButton()
+    }
 }
+

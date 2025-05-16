@@ -18,6 +18,10 @@ final class AuthViewController: UIViewController {
                 assertionFailure("Не удалось выполнить переход по \(showWebViewSegueIdentifier)")
                 return
             }
+            let authHelper = AuthHelper()
+            let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+            webViewController.presenter = webViewPresenter
+            webViewPresenter.view = webViewController
             webViewController.delegate = self
             print("Переход на webViewController выполнен")
         } else {
@@ -37,30 +41,28 @@ final class AuthViewController: UIViewController {
         navigationItem.backBarButtonItem?.tintColor = UIColor(named: "YPBlack")
     }
 }
-extension AuthViewController: WebViewControllerDelegate {
-    func webViewController(_ vc: WebViewController, didAuthenticateWithCode code: String) {
-        print("Получен код авторизации \(code)")
-        delegate?.authViewController(self, didAuthenticateWithCode: code)
-        UIBlockingProgressHUD.show()
-        fetchOAuthToken(code)
-    }
-    
-    private func fetchOAuthToken(_ code: String) {
-        oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
-            guard let self = self else { return }
-            UIBlockingProgressHUD.dismiss()
-            
-            switch result {
-            case .success:
-                print("Авторизация успешна, токен получен")
-                delegate?.authViewController(self, didAuthenticateWithCode: code)
-            case .failure(let error):
-                print("Ошибка получения токена \(error)")
-                self.showErrorAlert(error: error)
+    extension AuthViewController: WebViewControllerDelegate {
+        func webViewController(_ vc: WebViewController, didAuthenticateWithCode code: String) {
+            UIBlockingProgressHUD.show()
+            fetchOAuthToken(code)
+        }
+        
+        private func fetchOAuthToken(_ code: String) {
+            oAuth2Service.fetchOAuthToken(code: code) { [weak self] result in
+                guard let self = self else { return }
+                UIBlockingProgressHUD.dismiss()
+                
+                switch result {
+                case .success:
+                    print("Авторизация успешна, токен получен")
+                    delegate?.authViewController(self, didAuthenticateWithCode: code)
+                case .failure(let error):
+                    print("Ошибка получения токена \(error)")
+                    self.showErrorAlert(error: error)
+                }
             }
         }
-    }
-    
+        
     private func showErrorAlert(error: Error) {
         let alertController = UIAlertController(title: "Что-то пошло не так",
                                                 message: "Не удалось войти в систему",

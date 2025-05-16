@@ -1,5 +1,9 @@
 import Foundation
 
+protocol ProfileImageServiceProtocol {
+    var avatarURL: String? { get }
+}
+
 final class ProfileImageService {
     private let urlSession = URLSession.shared
     private let baseURL = "https://api.unsplash.com"
@@ -56,3 +60,4 @@ final class ProfileImageService {
         self.avatarURL = nil 
     }
 }
+extension ProfileImageService: ProfileImageServiceProtocol {}
