@@ -22,15 +22,15 @@ final class ImagesListCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-       
+        
         cellImage.kf.cancelDownloadTask()
     }
     
     override func layoutSubviews() {
-            super.layoutSubviews()
-            print(" cellImage frame: \(cellImage.frame)")
-            print(" likeButton frame: \(likeButton.frame)")
-        }
+        super.layoutSubviews()
+        print(" cellImage frame: \(cellImage.frame)")
+        print(" likeButton frame: \(likeButton.frame)")
+    }
     
     func setImage(url: URL, completion: @escaping () -> Void) {
         cellImage.kf.indicatorType = .activity
