@@ -22,8 +22,14 @@ final class ImagesListCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-       
+        
         cellImage.kf.cancelDownloadTask()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        print(" cellImage frame: \(cellImage.frame)")
+        print(" likeButton frame: \(likeButton.frame)")
     }
     
     func setImage(url: URL, completion: @escaping () -> Void) {
@@ -39,6 +45,7 @@ final class ImagesListCell: UITableViewCell {
     func setIsLiked(_ isLiked: Bool) {
         let likeImage = isLiked ? UIImage(named: "like_Button") : UIImage(named: "dislike_Button")
         likeButton.setImage(likeImage, for: .normal)
+        likeButton.accessibilityIdentifier = isLiked ? "like button on" : "like button off"
     }
 }
 

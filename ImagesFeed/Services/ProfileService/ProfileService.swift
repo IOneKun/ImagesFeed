@@ -1,5 +1,9 @@
 import Foundation
 
+protocol ProfileServiceProtocol {
+    var profile: Profile? { get }
+}
+
 final class ProfileService {
     
     enum NetworkError: Error {
@@ -58,3 +62,4 @@ final class ProfileService {
         self.profile = nil 
     }
 }
+extension ProfileService: ProfileServiceProtocol {}

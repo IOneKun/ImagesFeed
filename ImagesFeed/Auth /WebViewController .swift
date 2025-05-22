@@ -1,17 +1,25 @@
 import WebKit
 import Foundation
 
-enum WebViewConstants {
-    static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+protocol WebViewControllerProtocol: AnyObject {
+    var presenter: WebViewPresenterProtocol? { get set }
+    func load(request: URLRequest)
+    func setProgressValue(_ newValue: Float)
+    func setProgressHidden(_ isHidden: Bool)
 }
-
 protocol WebViewControllerDelegate: AnyObject {
     func webViewController(_ vc: WebViewController, didAuthenticateWithCode code: String)
     
     func webViewControllerDidCancel(_ vc: WebViewController)
 }
 
-final class WebViewController: UIViewController {
+final class WebViewController: UIViewController & WebViewControllerProtocol {
+    func load(request: URLRequest) {
+        webView.load(request)
+    }
+    
+    var presenter: WebViewPresenterProtocol?
+    
     @IBOutlet private var webView: WKWebView!
     @IBOutlet private var progressView: UIProgressView!
     private var estimatedProgressObservation: NSKeyValueObservation?
@@ -26,51 +34,20 @@ final class WebViewController: UIViewController {
              options: [.new],
              changeHandler: { [weak self] _, _ in
                  guard let self = self else { return }
-                 updateProgress()
+                 self.presenter?.didUpdateProgressValue(self.webView.estimatedProgress)
                  print("Прогресс обновляется...")
              })
         
-        loadAuthView()
+        presenter?.viewDidLoad()
         webView.navigationDelegate = self
-        updateProgress()
     }
     
-    private func updateProgress() {
-        progressView.progress = Float(webView.estimatedProgress)
-        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
+    func setProgressValue(_ newValue: Float) {
+        progressView.progress = newValue
     }
     
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey: Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
-    }
-    
-    
-    private func loadAuthView() {
-        guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            print("Не удалось создать URLComponents из \(WebViewConstants.unsplashAuthorizeURLString)")
-            return
-        }
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "scope", value: Constants.accessScope)
-        ]
-        guard let url = urlComponents.url else {
-            print("Не удалось создать URL из URLComponents \(urlComponents.path)")
-            return
-        }
-        let request = URLRequest(url: url)
-        webView.load(request)
+    func setProgressHidden(_ isHidden: Bool) {
+        progressView.isHidden = isHidden
     }
 }
 
@@ -87,19 +64,9 @@ extension WebViewController: WKNavigationDelegate {
         }
     }
     private func code(from navigationAction: WKNavigationAction) -> String? {
-        guard
-            let url = navigationAction.request.url,
-            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        else {
-            print("Некорректный URL запроса")
-            return nil
+        if let url = navigationAction.request.url {
+            return presenter?.code(from: url)
         }
-        
-        guard urlComponents.path == "/oauth/authorize/native" else {
-            print("Неожиданный путь URL: \(urlComponents.path)")
-            return nil
-        }
-        
-        return urlComponents.queryItems?.first(where: { $0.name == "code" })?.value
+        return nil
     }
 }
